@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Avg
 
 
 class Brand(models.Model):
@@ -50,3 +51,21 @@ class Rim(models.Model):
 
     def __str__(self):
         return f"{self.brand.name} {self.name} (R{self.diameter})"
+
+class NewsletterSubscriber(models.Model):
+        email = models.EmailField(unique=True)
+        joined_at = models.DateTimeField(auto_now_add=True)
+
+        def __str__(self):
+            return self.email
+
+class Rating(models.Model):
+        rim = models.ForeignKey('Rim', on_delete=models.CASCADE, related_name='ratings')
+        score = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)])  # Оцінки 1-5
+        created_at = models.DateTimeField(auto_now_add=True)
+        comment = models.TextField(blank=True, null=True, verbose_name="Коментар")
+        text = models.TextField(verbose_name="Ваш коментар", blank=True, null=True)  # Додаємо це
+        created_at = models.DateTimeField(auto_now_add=True)
+
+        def __str__(self):
+            return f"{self.rim.name} - {self.score}"

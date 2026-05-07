@@ -1,25 +1,34 @@
 {% extends 'lab3_app/base.html' %}
 {% block content %}
-    <div style="display: flex; gap: 40px; margin-top: 20px;">
-        <div style="flex: 1;">
-            {% if rim.photo %}
-                <img src="{{ rim.photo.url }}" style="width: 100%; max-width: 500px; border-radius: 15px; border: 2px solid #00d1ff;">
-            {% else %}
-                <div style="width: 100%; height: 300px; background: #333; display: flex; align-items: center; justify-content: center;">Фото відсутнє</div>
-            {% endif %}
-        </div>
-        <div style="flex: 1;">
-            <h1 style="color: #00d1ff;">{{ rim.brand.name }} {{ rim.name }}</h1>
-            <hr style="border: 0.5px solid #333;">
-            <p style="font-size: 20px;">Категорія: <b>{{ rim.category.name }}</b></p>
-            <p style="font-size: 20px;">Діаметр: <b>R{{ rim.diameter }}</b></p>
-            <h2 style="color: #00d1ff; font-size: 32px;">Ціна: {{ rim.price }} грн</h2>
+<div class="product-detail">
+    <div class="rating-box" style="margin-top: 40px; background: #1c1c24; padding: 25px; border-radius: 15px;">
+        <h2 class="glow-text">Відгуки та оцінки</h2>
 
-            <button style="background: #555; color: #aaa; padding: 15px 30px; border: none; border-radius: 5px; cursor: not-allowed; font-size: 18px;">
-                Купити (Немає в наявності)
-            </button>
-            <br><br>
-            <a href="{% url 'main' %}" style="color: #00d1ff;">⬅ Назад до списку</a>
-        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="rate">
+            <div style="margin-bottom: 15px;">
+                <label>Оцініть товар:</label><br>
+                {{ rating_form.score }}
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label>Ваш коментар:</label><br>
+                {{ rating_form.text }}
+            </div>
+            <button type="submit" name="rate" class="btn-primary">Надіслати відгук</button>
+        </form>
+
+        <hr style="border-color: #333; margin: 30px 0;">
+
+        {% for review in rim.ratings.all %}
+            <div style="border-bottom: 1px solid #333; padding: 15px 0;">
+                <strong style="color: #00ffcc;">Оцінка: {{ review.score }}/5</strong>
+                <p style="margin: 5px 0;">{{ review.text }}</p>
+                <small style="color: #666;">{{ review.created_at|date:"d.m.Y" }}</small>
+            </div>
+        {% empty %}
+            <p>Відгуків ще немає. Будь першим!</p>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}

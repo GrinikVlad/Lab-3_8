@@ -1,0 +1,29 @@
+{% extends 'lab3_app/base.html' %}
+{% block content %}
+<div class="cart-container">
+    <h1 class="glow-text">Твій кошик</h1>
+
+    {% if message %}
+        <h2 style="color: #00ffcc;">{{ message }}</h2>
+        <a href="{% url 'main' %}" class="btn-primary">Повернутись до покупок</a>
+    {% elif rims %}
+        <div class="product-grid">
+            {% for rim in rims %}
+                <div class="product-card">
+                    <h2>{{ rim.brand.name }} {{ rim.name }}</h2>
+                    <h3 class="price">{{ rim.price }} грн</h3>
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="checkout" class="btn-primary" style="margin-top: 30px;">
+                Оформити замовлення
+            </button>
+        </form>
+    {% else %}
+        <p>Кошик порожній.</p>
+    {% endif %}
+</div>
+{% endblock %}
