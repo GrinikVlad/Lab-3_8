@@ -1,0 +1,57 @@
+{% extends 'lab3_app/base.html' %}
+
+{% block content %}
+<div class="auth-overlay" style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=3540&auto=format&fit=crop') center/cover; min-height: 100vh; display: flex; justify-content: center; align-items: center;">
+
+    <div class="glass-card" style="width: 450px; padding: 45px; background: rgba(255,255,255,0.08); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px; text-align: center; position: relative;">
+
+        <a href="{% url 'main' %}" style="position: absolute; top: 20px; right: 25px; color: white; text-decoration: none; font-size: 24px; opacity: 0.5;">✕</a>
+
+        <h2 style="font-weight: 800; letter-spacing: 2px; color: white; margin-bottom: 40px; font-size: 32px;">REGISTER</h2>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div style="text-align: left; margin-bottom: 24px;">
+                    <label style="color: #7fd6ff; font-size: 13px; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 8px;">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.errors %}
+                        <p style="color: #ff8b8b; font-size: 12px; margin-top: 5px;">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 10px; padding: 18px; border-radius: 14px; font-size: 18px; font-weight: 800;">
+                CREATE ACCOUNT
+            </button>
+        </form>
+
+        <p style="margin-top: 30px; font-size: 14px; color: rgba(255,255,255,0.7);">
+            Already have an account? <a href="{% url 'login' %}" style="color: #29b6ff; text-decoration: none; font-weight: 600;">Login</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    /* Стилізація полів, які генерує Django */
+    .glass-card input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid rgba(255,255,255,0.25);
+        padding: 12px 0;
+        color: white;
+        font-size: 16px;
+        outline: none;
+        transition: 0.3s;
+    }
+    .glass-card input:focus {
+        border-color: #29b6ff;
+    }
+</style>
+{% endblock %}

@@ -1,7 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Rim, Category, Rating, NewsletterSubscriber
+from .models import Rim, Category, Rating, NewsletterSubscriber, Order, OrderItem
 from django.db.models import Avg
 from .forms import NewsletterForm, RatingForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth import login
+from .forms import ExtendedUserCreationForm
 
 def main_page(request):
     # Контекст для головної сторінки
@@ -142,3 +148,86 @@ def cart_page(request):
         return render(request, 'lab3_app/cart.html', {'message': "Дякуємо! Ваше замовлення прийнято."})
 
     return render(request, 'lab3_app/cart.html', {'rims': rims})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    if request.user.is_staff:  # Якщо адмін
+        orders = Order.objects.all().order_by('-created_at')
+    else:  # Якщо звичайний юзер
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
+    return render(request, 'lab3_app/profile.html', {'orders': orders})
+
+
+# Онови функцію оформлення замовлення в cart_page
+def checkout(request):
+    cart_ids = request.session.get('cart', [])
+    if cart_ids and request.user.is_authenticated:
+        new_order = Order.objects.create(user=request.user)
+        rims = Rim.objects.filter(id__in=cart_ids)
+        for rim in rims:
+            OrderItem.objects.create(order=new_order, rim=rim, price=rim.price)
+        request.session['cart'] = []  # Очищуємо кошик
+        return redirect('profile')
+    return redirect('login')
+
+
+@login_required
+def profile(request):
+    if request.user.is_staff:
+        # Адмін бачить абсолютно всі замовлення сайту
+        orders = Order.objects.all().order_by('-created_at')
+    else:
+        # Звичайний користувач бачить лише ті, де він вказаний як власник
+        orders = Order.objects.filter(user=request.user).order_by('-created_at')
+
+    return render(request, 'lab3_app/profile.html', {'orders': orders})
+
+# Створюємо власну форму на основі стандартної, щоб додати поле Email
+class ExtendedUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, help_text="Обов'язкове поле для відновлення пароля")
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email',)
+
+# У твоїй view-функції:
+def register(request):
+    if request.method == 'POST':
+        form = ExtendedUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = ExtendedUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = ExtendedUserCreationForm(request.POST)
+        if form.is_valid():
+            # 1. Зберігаємо користувача в змінну
+            user = form.save()
+
+            # 2. Автоматично логінимо його
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            # 3. Перекидаємо відразу на головну (або в профіль)
+            return redirect('main')
+    else:
+        form = ExtendedUserCreationForm()
+
+    return render(request, 'registration/register.html', {'form': form})

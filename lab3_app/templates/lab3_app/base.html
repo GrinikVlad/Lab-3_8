@@ -1,57 +1,41 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>RimStore - Магазин Дисків</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f11; color: #e0e0e0; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background: linear-gradient(90deg, #1a1a24 0%, #121212 100%); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00ffcc; box-shadow: 0 4px 15px rgba(0, 255, 204, 0.2); }
-        .logo { font-size: 28px; font-weight: 900; color: #00ffcc; text-decoration: none; text-transform: uppercase; letter-spacing: 2px; }
-        nav { display: flex; gap: 20px; align-items: center; }
-        nav a { color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; transition: 0.3s; padding: 8px 12px; border-radius: 5px; }
-        nav a:hover { background: #00ffcc; color: #000; box-shadow: 0 0 10px #00ffcc; }
-        .cart-btn { border: 2px solid #00ffcc; color: #00ffcc; }
-        .container { padding: 40px; flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
-        .product-grid { display: flex; gap: 30px; flex-wrap: wrap; }
-        .product-card { background: #1c1c24; padding: 20px; border-radius: 15px; width: 300px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 1px solid #2a2a35; transition: transform 0.3s; }
-        .product-card:hover { transform: translateY(-5px); border-color: #00ffcc; }
-        .product-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-        .price { color: #00ffcc; font-size: 22px; margin: 10px 0; font-weight: bold; }
-        .btn-primary { background: #00ffcc; color: #000; padding: 12px 25px; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-primary:hover { box-shadow: 0 0 15px #00ffcc; transform: scale(1.05); }
-        .glow-text { color: #ffffff; text-shadow: 0 0 10px rgba(0, 255, 204, 0.5); border-left: 5px solid #00ffcc; padding-left: 15px; }
-        footer { background: #121212; padding: 40px; text-align: center; border-top: 2px solid #2a2a35; margin-top: auto; }
-        .newsletter-box { background: #1c1c24; padding: 30px; border-radius: 15px; display: inline-block; border: 1px solid #00ffcc; }
-        .input-field { padding: 12px; border-radius: 5px; border: 1px solid #333; background: #0f0f11; color: white; width: 250px; outline: none; }
-        .input-field:focus { border-color: #00ffcc; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RimStore — Performance Wheels</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <a href="{% url 'main' %}" class="logo">RimStore</a>
-        <nav>
-            <a href="{% url 'main' %}">Всі диски</a>
+
+<header>
+    <a href="{% url 'main' %}" class="logo">RIM<span>STORE</span></a>
+    <nav>
+        <div class="category-menu">
+            <a href="{% url 'main' %}" class="nav-link">Усі товари</a>
             {% for cat in categories %}
-                <a href="{% url 'category_detail' cat.id %}">{{ cat.name }}</a>
+                <a href="{% url 'category_detail' cat.id %}" class="nav-link">{{ cat.name }}</a>
             {% endfor %}
-            <a href="{% url 'cart_page' %}" class="cart-btn">🛒 Кошик</a>
-        </nav>
-    </header>
-
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
-
-    <footer>
-        <div class="newsletter-box">
-            <h3 style="margin-top: 0; color: #00ffcc;">Підпишись на розсилку</h3>
-            <form method="post" action="{% url 'main' %}" style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-                {% csrf_token %}
-                {{ sub_form.email }}
-                <button type="submit" name="subscribe" class="btn-primary" style="padding: 11px 20px;">Ок</button>
-            </form>
         </div>
-        <p style="margin-top: 20px; color: #666;">© 2026 RimStore. Лабораторна робота.</p>
-    </footer>
+        <a href="{% url 'cart_page' %}" class="nav-link">🛒 Кошик</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="nav-link profile-link">👤 {{ user.username }}</a>
+            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}<button type="submit" class="logout-btn">Вийти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}" class="nav-link">Увійти</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
 </body>
 </html>

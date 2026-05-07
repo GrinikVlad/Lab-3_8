@@ -1,33 +1,43 @@
 {% extends 'lab3_app/base.html' %}
 {% block content %}
-<div class="product-detail">
-    <div class="rating-box" style="margin-top: 40px; background: #1c1c24; padding: 25px; border-radius: 15px;">
-        <h2 class="glow-text">Відгуки та оцінки</h2>
+<div class="product-page" style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px;">
+    <div style="background: var(--glass); border-radius: 30px; padding: 40px; text-align: center; border: 1px solid var(--border);">
+        <img src="{{ rim.photo.url }}" style="width: 100%; max-width: 500px; object-fit: contain;">
+    </div>
 
-        <form method="post">
-            {% csrf_token %}
-            <input type="hidden" name="rate">
-            <div style="margin-bottom: 15px;">
-                <label>Оцініть товар:</label><br>
-                {{ rating_form.score }}
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label>Ваш коментар:</label><br>
-                {{ rating_form.text }}
-            </div>
-            <button type="submit" name="rate" class="btn-primary">Надіслати відгук</button>
-        </form>
+    <div>
+        <h1 style="font-size: 48px; margin-bottom: 10px;">{{ rim.brand.name }} {{ rim.name }}</h1>
+        <p style="font-size: 20px; color: #888;">Середній бал: <span style="color: var(--accent);">{{ avg_rating|default:"0.0" }} / 5.0</span></p>
+        <div style="font-size: 36px; font-weight: 800; margin: 30px 0;">{{ rim.price }} грн</div>
+        <a href="{% url 'add_to_cart' rim.id %}" class="btn-primary" style="padding: 20px 50px; font-size: 20px;">🛒 В КОШИК</a>
+    </div>
+</div>
 
-        <hr style="border-color: #333; margin: 30px 0;">
+<div style="margin-top: 80px; background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid var(--border);">
+    <h2 class="glow-text">Відгуки та оцінки</h2>
 
+    <form method="post" style="max-width: 600px; margin-bottom: 50px;">
+        {% csrf_token %}
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--accent); display: block; margin-bottom: 10px;">Оцініть товар:</label>
+            {{ rating_form.score }}
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="color: var(--accent); display: block; margin-bottom: 10px;">Ваш коментар:</label>
+            {{ rating_form.text }}
+        </div>
+        <button type="submit" name="rate" class="btn-primary">Надіслати відгук</button>
+    </form>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
         {% for review in rim.ratings.all %}
-            <div style="border-bottom: 1px solid #333; padding: 15px 0;">
-                <strong style="color: #00ffcc;">Оцінка: {{ review.score }}/5</strong>
-                <p style="margin: 5px 0;">{{ review.text }}</p>
-                <small style="color: #666;">{{ review.created_at|date:"d.m.Y" }}</small>
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--accent); font-weight: 800;">ОЦІНКА: {{ review.score }}/5</span>
+                    <span style="color: #444; font-size: 12px;">{{ review.created_at|date:"d.m.Y" }}</span>
+                </div>
+                <p style="margin: 10px 0; line-height: 1.6;">{{ review.text }}</p>
             </div>
-        {% empty %}
-            <p>Відгуків ще немає. Будь першим!</p>
         {% endfor %}
     </div>
 </div>

@@ -1,15 +1,26 @@
 {% extends 'lab3_app/base.html' %}
 {% block content %}
-    <h1 style="color: #00d1ff;">Диски категорії: {{ category.name }}</h1>
-    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+    <div style="margin-bottom: 40px; border-left: 3px solid var(--accent); padding-left: 20px;">
+        <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 0;">
+            {{ category.name }} <span style="color: var(--muted); font-weight: 400; font-size: 18px;">/ категорія</span>
+        </h1>
+        <p style="color: var(--muted); margin-top: 5px;">Знайдено дисків: {{ rims.count }}</p>
+    </div>
+
+    <div class="product-grid">
         {% for rim in rims %}
-            <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; width: 200px;">
-                {% if rim.photo %}
-                    <img src="{{ rim.photo.url }}" style="width: 100%; border-radius: 5px;">
-                {% endif %}
-                <h3><a href="{% url 'rim_detail' rim.id %}" style="color: #fff; text-decoration: none;">{{ rim.name }}</a></h3>
-                <p>{{ rim.price }} грн</p>
-            </div>
+            <article class="product-item">
+                <a href="{% url 'rim_detail' rim.id %}" style="text-decoration: none; color: inherit;">
+                    <img src="{{ rim.photo.url }}" alt="{{ rim.name }}">
+                    <h3>{{ rim.brand.name }} {{ rim.name }}</h3>
+                    <div class="price">{{ rim.price }} грн</div>
+                </a>
+                <a href="{% url 'add_to_cart' rim.id %}" class="btn-primary" style="width: 100%; padding: 12px; margin-top: auto;">
+                    🛒 В кошик
+                </a>
+            </article>
+        {% empty %}
+            <p style="color: var(--muted);">У цій категорії поки немає товарів.</p>
         {% endfor %}
     </div>
 {% endblock %}

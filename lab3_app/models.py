@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Avg
+from django.contrib.auth.models import User
 
 
 class Brand(models.Model):
@@ -69,3 +70,16 @@ class Rating(models.Model):
 
         def __str__(self):
             return f"{self.rim.name} - {self.score}"
+
+class Order(models.Model):
+            user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Користувач")
+            created_at = models.DateTimeField(auto_now_add=True)
+            is_completed = models.BooleanField(default=False)
+
+            def __str__(self):
+                return f"Замовлення #{self.id} від {self.user.username}"
+
+class OrderItem(models.Model):
+            order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
+            rim = models.ForeignKey('Rim', on_delete=models.CASCADE)
+            price = models.DecimalField(max_digits=10, decimal_places=2)

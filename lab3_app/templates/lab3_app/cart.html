@@ -1,29 +1,42 @@
 {% extends 'lab3_app/base.html' %}
 {% block content %}
-<div class="cart-container">
-    <h1 class="glow-text">Твій кошик</h1>
+<h1 class="glow-text">Твій кошик</h1>
 
-    {% if message %}
-        <h2 style="color: #00ffcc;">{{ message }}</h2>
-        <a href="{% url 'main' %}" class="btn-primary">Повернутись до покупок</a>
-    {% elif rims %}
-        <div class="product-grid">
-            {% for rim in rims %}
-                <div class="product-card">
-                    <h2>{{ rim.brand.name }} {{ rim.name }}</h2>
-                    <h3 class="price">{{ rim.price }} грн</h3>
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start;">
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        {% for rim in rims %}
+            <div style="background: var(--glass); border: 1px solid var(--border); padding: 20px; border-radius: 20px; display: flex; align-items: center; gap: 20px;">
+                <img src="{{ rim.photo.url }}" style="width: 100px; height: 100px; object-fit: contain; background: #000; border-radius: 10px;">
+                <div style="flex-grow: 1;">
+                    <h3 style="margin: 0;">{{ rim.brand.name }} {{ rim.name }}</h3>
+                    <p style="color: #888; margin: 5px 0;">R{{ rim.diameter }} | {{ rim.category.name }}</p>
                 </div>
-            {% endfor %}
-        </div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--accent);">{{ rim.price }} грн</div>
+            </div>
+        {% empty %}
+            <div style="text-align: center; padding: 50px; background: var(--glass); border-radius: 20px;">
+                <h2>Твій кошик порожній...</h2>
+                <a href="{% url 'main' %}" class="btn-primary">Перейти до покупок</a>
+            </div>
+        {% endfor %}
+    </div>
 
-        <form method="post">
+    {% if rims %}
+    <div style="background: rgba(0, 242, 255, 0.05); border: 1px solid var(--accent); padding: 30px; border-radius: 25px; position: sticky; top: 100px;">
+        <h2 style="margin-top: 0;">Підсумок</h2>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 18px;">
+            <span>Товарів:</span>
+            <span>{{ rims|length }}</span>
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
+        <form method="post" action="{% url 'checkout' %}">
             {% csrf_token %}
-            <button type="submit" name="checkout" class="btn-primary" style="margin-top: 30px;">
+            <button type="submit" name="checkout" class="btn-primary" style="width: 100%; padding: 15px; font-size: 18px;">
                 Оформити замовлення
             </button>
         </form>
-    {% else %}
-        <p>Кошик порожній.</p>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

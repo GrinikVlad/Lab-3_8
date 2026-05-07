@@ -1,0 +1,36 @@
+{% extends 'lab3_app/base.html' %}
+
+{% block content %}
+<div class="glass-card" style="width: 100%; max-width: 900px; margin: 0 auto;">
+    <h1 class="page-title">
+        {% if user.is_staff %}Усі замовлення (Адмін){% else %}Мої замовлення{% endif %}
+    </h1>
+
+    <div style="text-align: left; margin-top: 30px;">
+        {% for order in orders %}
+            <div style="background: var(--surface-2); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 10px;">
+                    <strong>Замовлення №{{ order.id }}</strong>
+                    <span style="color: var(--muted);">{{ order.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+
+                {% if user.is_staff %}
+                    <p style="color: var(--accent); font-size: 13px;">Клієнт: {{ order.user.username }} ({{ order.user.email }})</p>
+                {% endif %}
+
+                <ul style="list-style: none; padding: 0;">
+                    {% for item in order.items.all %}
+                        <li style="font-size: 14px;">• {{ item.rim.brand.name }} {{ item.rim.name }} — {{ item.price }} грн</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% empty %}
+            <p style="text-align: center; color: var(--muted);">Замовлень поки немає.</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'password_reset' %}" class="btn-primary" style="margin-top: 20px;">
+        ⚙️ Відновити пароль
+    </a>
+</div>
+{% endblock %}
