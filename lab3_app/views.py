@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Rim, Category
 
 def main_page(request):
     # Контекст для головної сторінки
@@ -26,3 +27,34 @@ def page_two(request):
         'is_main_page': False,
     }
     return render(request, 'lab3_app/dynamic_page.html', context)
+
+def main_page(request):
+    categories = Category.objects.all()
+    rims = Rim.objects.all()
+    context = {
+        'categories': categories,
+        'rims': rims
+    }
+    return render(request, 'lab3_app/index.html', context)
+
+def about_page(request):
+    categories = Category.objects.all()
+    context = {
+        'categories': categories
+    }
+    return render(request, 'lab3_app/about.html', context)
+
+
+def main_page(request, category_id=None):
+    categories = Category.objects.all()
+
+    if category_id:
+        rims = Rim.objects.filter(category_id=category_id)
+    else:
+        rims = Rim.objects.all()
+
+    context = {
+        'categories': categories,
+        'rims': rims
+    }
+    return render(request, 'lab3_app/index.html', context)

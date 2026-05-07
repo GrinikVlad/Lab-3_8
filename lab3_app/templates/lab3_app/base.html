@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин дисків</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #fff; margin: 0; }
+        header { background: #1f1f1f; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #00d1ff; }
+        .logo { font-size: 24px; font-weight: bold; color: #00d1ff; text-decoration: none; }
+        nav a { color: #fff; text-decoration: none; margin-left: 20px; font-size: 18px; }
+        nav a:hover { color: #00d1ff; }
+        .container { padding: 30px; min-height: 70vh; }
+        footer { background: #1f1f1f; padding: 20px; text-align: center; border-top: 2px solid #00d1ff; margin-top: auto; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{% url 'main' %}" class="logo">RimStore</a>
+        <nav>
+    <a href="{% url 'main' %}">Головна</a>
+    {% for cat in categories %}
+        <a href="{% url 'category' cat.id %}">{{ cat.name }}</a>
+    {% endfor %}
+    <a href="{% url 'about' %}">Про магазин</a>
+</nav>
+    </header>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <h2>RimStore</h2>
+        <p>Найкращі диски для твого авто.</p>
+        <p>© 2026 Всі права захищено.</p>
+    </footer>
+</body>
+</html>
