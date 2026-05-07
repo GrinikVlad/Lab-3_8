@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Rim, Category
 
 def main_page(request):
@@ -58,3 +58,4 @@ def main_page(request, category_id=None):
         'rims': rims
     }
     return render(request, 'lab3_app/index.html', context)
+
