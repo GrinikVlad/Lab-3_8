@@ -59,3 +59,26 @@ def main_page(request, category_id=None):
     }
     return render(request, 'lab3_app/index.html', context)
 
+def main_page(request):
+    return render(request, 'lab3_app/index.html', {
+        'categories': Category.objects.all(),
+        'rims': Rim.objects.all()
+    })
+
+# Сторінка конкретної категорії
+def category_page(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    rims = Rim.objects.filter(category=category) # Тільки товари цієї категорії
+    return render(request, 'lab3_app/category.html', {
+        'category': category,
+        'categories': Category.objects.all(),
+        'rims': rims
+    })
+
+# Сторінка одного товару
+def rim_detail(request, rim_id):
+    rim = get_object_or_404(Rim, id=rim_id)
+    return render(request, 'lab3_app/rim_detail.html', {
+        'rim': rim,
+        'categories': Category.objects.all()
+    })

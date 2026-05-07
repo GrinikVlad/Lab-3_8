@@ -35,6 +35,7 @@ class Rim(models.Model):
     name = models.CharField(max_length=100, verbose_name="Модель диску")
     diameter = models.IntegerField(verbose_name="Діаметр (R)")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Ціна (грн)")
+    photo = models.ImageField(upload_to='rims_photos/', null=True, blank=True, verbose_name="Фото диску")
 
     # ЗВ'ЯЗОК ТАБЛИЦЬ: Диск належить певному бренду і певній категорії
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name="Бренд")

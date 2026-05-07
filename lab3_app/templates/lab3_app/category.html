@@ -1,0 +1,15 @@
+{% extends 'lab3_app/base.html' %}
+{% block content %}
+    <h1 style="color: #00d1ff;">Диски категорії: {{ category.name }}</h1>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        {% for rim in rims %}
+            <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; width: 200px;">
+                {% if rim.photo %}
+                    <img src="{{ rim.photo.url }}" style="width: 100%; border-radius: 5px;">
+                {% endif %}
+                <h3><a href="{% url 'rim_detail' rim.id %}" style="color: #fff; text-decoration: none;">{{ rim.name }}</a></h3>
+                <p>{{ rim.price }} грн</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
